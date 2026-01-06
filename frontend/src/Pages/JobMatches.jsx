@@ -26,7 +26,7 @@ export default function JobMatches() {
             },
           }
         );
-
+        console.log(res)
         setJobs(res.data.jobs || []);
       } catch (err) {
         console.error(err);
@@ -59,30 +59,30 @@ export default function JobMatches() {
         <p>Matched based on your skills</p>
       </section>
 
-      <section className="flex flex-wrap gap-5 justify-center">
+      <section className="flex flex-wrap gap-5 justify-around">
         {jobs.map((job, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl w-[25%] min-w-[300px] shadow-md p-6 hover:shadow-xl transition"
+            className="bg-white rounded-xl w-[25%] min-w-[300px] shadow-md p-6 hover:shadow-xl transition mt-5"
           >
-            <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold">
+            <div >
+              <h3 className="text-xl font-bold text-center ">
                 {job.company.display_name}
               </h3>
             </div>
 
-            <p className="text-lg font-semibold mt-1">
-              {job.title}
-            </p>
+            
 
-            <div className="flex gap-6 text-sm text-gray-500 mt-2">
+            <div className="mt-5 text-center">
               <span>📍 {job.location.display_name}</span>
               <span>
                 💰 {job.salary_min ? `${job.salary_min} - ${job.salary_max}` : "Not disclosed"}
               </span>
             </div>
-
-            <div className="mt-5 flex justify-end">
+            <p className="text-lg font-semibold mt-1 text-center mt-5">
+              {job.title}
+            </p>
+            <div className="mt-5 flex justify-center">
               <a
                 href={job.redirect_url}
                 target="_blank"
