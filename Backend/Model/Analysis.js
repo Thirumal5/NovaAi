@@ -1,42 +1,51 @@
 import mongoose from "mongoose";
 
-const aiAnalysisSchema = new mongoose.Schema(
+const analysisSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
-      required: true
+      required: true,
+    },
+
+    experienceLevel: {
+      type: String,
     },
 
     skills: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+
+    matchedRoles: {
       type: [String],
-      default: []
+      default: [],
     },
 
     strengths: {
       type: [String],
-      default: []
+      default: [],
     },
 
-    improvementPlan: {
+    improvementPlans: {
       type: [String],
-      default: []
+      default: [],
     },
 
     missingSkills: {
       type: [String],
-      default: []
+      default: [],
     },
 
     overallScore: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
-const AIAnalysis = mongoose.model("AIAnalysis", aiAnalysisSchema);
-
-export default AIAnalysis;
+const Analysis = mongoose.model("Analysis", analysisSchema);
+export default Analysis;

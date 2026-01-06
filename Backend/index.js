@@ -1,11 +1,11 @@
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express"
 import cors from "cors"
 import ConnectDb from "./Database/Db.js"
 import resumerouter from "./Route/resume.js"
 import router from "./Route/Auth.js"
-
+import matchroute from './Route/job.js'
 import Analysisroute from './Route/latestAnalysis.js'
 const app = express()
 
@@ -15,6 +15,7 @@ app.use(cors())
 app.use("/api/auth", router)
 app.use("/api/resume", resumerouter)
 app.use('/api/analysis',Analysisroute)
+app.use('/api/match',matchroute)
 
 
 

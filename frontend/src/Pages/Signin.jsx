@@ -26,7 +26,7 @@ export default function Signin() {
       }
       catch(err)
       {
-         const errorMessage =err.response?.data?.message || "Registration failed";
+         const errorMessage =err.response?.data?.message || "Login failed";
         
           toast.error(errorMessage);
           console.log(err.message);

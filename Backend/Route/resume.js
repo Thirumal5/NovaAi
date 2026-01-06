@@ -1,102 +1,116 @@
-import multer from "multer"
-import { Router } from "express"
-import mammoth from "mammoth"
-import { getOpenAI } from "../config/openAi.js"
-import AIAnalysis from "../Model/Analysis.js"
-const route = Router()
+import multer from "multer";
+import { Router } from "express";
+import mammoth from "mammoth";
+import OpenAI from "openai";
+import Analysis from "../Model/Analysis.js";
 
-const uploadfile = multer({
+const route = Router();
+
+const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  }
 })
-
-route.post("/resumeanalyzer", uploadfile.single("resume"), async (req, res) => {
+route.post("/resumeAnalyzer", upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ success: false, message: "No file received" })
+      return res.status(400).json({
+        success: false,
+        message: "Resume file is required",
+      });
     }
 
-    const result = await mammoth.extractRawText({
-      buffer: req.file.buffer
-    })
+    const { value } = await mammoth.extractRawText({
+      buffer: req.file.buffer,
+    });
 
-    const extractedText = result.value
+    if (!value || value.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Could not extract text from resume",
+      });
+    }
 
-    const openai = getOpenAI()
+    const client = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1",
+    });
 
-    const aiResponse = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
-          content: "You are an expert resume analyzer. Return strict JSON only."
+          content: "You are an expert resume analyzer. Return ONLY valid JSON with no additional text or markdown formatting.",
         },
         {
           role: "user",
-          content: `
-Analyze the resume and return ONLY valid JSON.
+          content: `Analyze the resume and return ONLY valid JSON.
+Do not add explanations, text, or markdown.
 
 Rules:
-- Scores must be between 0 and 10
-- No explanations
-- No markdown
+- Extract ONLY skills that are clearly present in the resume
+- skills must be an OBJECT (key = skill name, value = score between 0 and 1)
+- Score reflects proficiency based on experience, projects, and usage
+- overallScore must be between 0 and 10
 
-Return JSON:
+Return JSON in this exact format:
+
+Return format:
 {
-  "overallScore": number,
-  "skills": { "skill": number },
-  "recommendedPrimaryRole": string,
-  "matchedRoles":[
-  {
-    "roles":string,
-    "matchscore":number
-  }
-  ],
-   "missingSkills": {
-    "highPriority": [],
-    "mediumPriority": [],
-    "lowPriority": []
-  },
+  "experienceLevel": "",
+  "skills": {}, 
+  "matchedRoles": [],
   "strengths": [],
-  "improvementPlan": []
+  "missingSkills": [],
+  "improvementPlans": [],
+  "overallScore": 0
 }
+Resume text:
+${value}`,
+        },
+      ],
+      
+    });
 
-Resume:
-${extractedText}
-`
-        }
-      ]
-    })
+    const aiText = response.choices[0].message.content
+      .replace(/```json|```/g, "")
+      .trim();
 
-    const raw = aiResponse.choices[0].message.content
-    const jsonString = raw.replace(/```json|```/g, "").trim()
-    const analysis = JSON.parse(jsonString)
-     const skills=Object.keys(analysis.skills)
-     const missingskills=[
-          ...analysis.missingSkills.highPriority,
-          ...analysis.missingSkills.mediumPriority,
-          ...analysis.missingSkills.lowPriority
-     ]
-    const analysisDb=await AIAnalysis.create(
-        {
-            userId:req.user?.id|| "demoUser",
-            skills:skills,
-            strengths:analysis.strengths,
-            improvementPlan:analysis.improvementPlan,
-            missingSkills:missingskills,
-            overallScore:analysis.overallScore
-        }
-    )
+    let analysis;
 
-    return res.status(200).json({ success: true, data:analysis})
-
+    try {
+      analysis = JSON.parse(aiText);
+    } catch (parseError) {
+      console.error("JSON Parse Error:", parseError);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to parse AI response",
+        raw: aiText,
+      });
+    }
+ 
+   
+    res.status(200).json({
+      success: true,
+      analysis,
+    });
   } catch (err) {
-    console.error(err)
-    return res.status(500).json({
-      success: false,
-      message: "Resume analysis failed"
-    })
-  }
-})
+    console.error("Resume analysis error:", err);
 
-export default route
+    if (err.message && err.message.includes("file")) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Resume analysis failed",
+    });
+  }
+});
+
+export default route;

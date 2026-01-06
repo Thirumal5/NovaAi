@@ -1,35 +1,52 @@
-import { Router } from "express";
-import AIAnalysis from "../Model/Analysis";
-import axios from 'axios'
-const route=Router()
+import { Router } from "express"
+import AIAnalysis from "../Model/Analysis.js"
+import { Adzunajob } from "../config/adzuna.js"
 
-route.get('/match',async(req,res)=>{
+const route = Router()
 
-    try{
-            const analysis=await AIAnalysis.findone({"userId":"demo"}).sort({createdAt:-1})
-            if(!analysis)
-            {
-                return res.status(404).json({success:false,message:"No analysis found"})
-            }
-            const skills=analysis.skills.map((skill)=>skill.toLowerCase());
-            const role=analysis.recommendedPrimaryRole;
+route.get("/jobs", async (req, res) => {
+  try {
+    const { userId } = req.query
 
-            const response=await axios.get("https://api.adzuna.com/v1/api/jobs/in/search/1",
-                {
-                    params:{
-                            app_id: process.env.ADZUNA_APP_ID,
-                            app_key: process.env.ADZUNA_APP_KEY,
-                            what:role,
-                            result_per_page:20
-                    }
-                }
-            )
-            const job=response.data.result;
-            
-            
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required"
+      })
     }
-    catch(err)
-    {
 
+    const analysis = await AIAnalysis
+      .findOne({ userId })
+      .sort({ createdAt: -1 })
+
+    if (!analysis) {
+      return res.status(404).json({
+        success: false,
+        message: "No analysis found"
+      })
     }
+
+    const role =
+      Array.isArray(analysis.matchedRoles) &&
+      analysis.matchedRoles.length > 0 &&
+      analysis.matchedRoles[0].roles
+        ? analysis.matchedRoles[0].roles
+        : "software developer"
+
+    const jobs = await Adzunajob({ role })
+
+    return res.json({
+      success: true,
+      jobs
+    })
+
+  } catch (err) {
+    console.error(err)
+    return res.status(500).json({
+      success: false,
+      message: "Job fetch failed"
+    })
+  }
 })
+
+export default route
