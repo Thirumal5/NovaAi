@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef ,useEffect} from "react";
 import { HiArrowLeft } from "react-icons/hi2";
 import { LuUpload } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,17 +6,26 @@ import { FaFileAlt } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import  { Auth } from "../Context/ContextProvider";
+
 
 export default function Resumeupload() {
   const fileupload = useRef(null);
   const navigate = useNavigate();
-
+  const{token}=Auth()
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const uploadfile = () => {
     fileupload.current.click();
   };
+
+  useEffect(() => {
+  if (!token) {
+    toast.error("Please login to upload resume");
+    navigate("/signin");
+  }
+}, [token, navigate]);
 
   const fileanalyze = async () => {
     if (!resume) {
@@ -32,16 +41,23 @@ export default function Resumeupload() {
 
     const resumedata = new FormData();
     resumedata.append("resume", resume);
-    resumedata.append("userId", "demoUser");
+    
 
     try {
       setLoading(true);
 
       const response = await axios.post(
+
         "http://localhost:5000/api/resume/resumeAnalyzer",
-        resumedata
+        resumedata,
+        {
+      headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  }
       );
-      
+      console.log(response.data.analysis)
       if (response.data.success) {
         navigate("/Resumeresult", {
           state: response.data.analysis,

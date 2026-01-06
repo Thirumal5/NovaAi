@@ -3,6 +3,7 @@ import { Router } from "express";
 import mammoth from "mammoth";
 import OpenAI from "openai";
 import Analysis from "../Model/Analysis.js";
+import middleware from "../Middleware/Middleware.js";
 
 const route = Router();
 
@@ -12,7 +13,18 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024,
   }
 })
-route.post("/resumeAnalyzer", upload.single("resume"), async (req, res) => {
+function newskills(skills)
+{
+  const sanitizedskills={}
+  for(const key in skills)
+  {
+    const safekey=key.replace(/\./g,"_");
+    sanitizedskills[safekey]=skills[key];
+
+  }
+  return sanitizedskills;
+}
+route.post("/resumeAnalyzer", middleware,upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -28,7 +40,7 @@ route.post("/resumeAnalyzer", upload.single("resume"), async (req, res) => {
     if (!value || value.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Could not extract text from resume",
+        message: "Could not extract text from resumes",
       });
     }
 
@@ -90,7 +102,19 @@ ${value}`,
         raw: aiText,
       });
     }
- 
+    
+    const savedb=await Analysis.create(
+      {
+        userId:req.userId,
+        experienceLevel:analysis.experienceLevel,
+        skills: newskills(analysis.skills),
+        matchedRoles:analysis.matchedRoles,
+        strengths:analysis.strengths,
+        improvementPlans:analysis.improvementPlans,
+        missingSkills:analysis.missingSkills,
+        overallScore:analysis.overallScore
+}
+    )
    
     res.status(200).json({
       success: true,

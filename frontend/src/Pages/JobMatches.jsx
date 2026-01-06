@@ -1,37 +1,49 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { HiArrowLeft } from "react-icons/hi2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Auth } from "../Context/ContextProvider";
 
 export default function JobMatches() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { token } = Auth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchJobs = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/match/jobs",
-        {
-          params: {
-            userId: "demoUser"
-          }
-        }
-      );
-      setJobs(res.data.jobs || []);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+    if (!token) {
+      navigate("/signin");
+      return;
     }
-  };
 
-  fetchJobs();
-}, []);
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/match/jobs",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setJobs(res.data.jobs || []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, [token, navigate]);
 
   if (loading) {
     return <p className="text-center mt-10">Loading jobs...</p>;
   }
+
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 md:p-8">

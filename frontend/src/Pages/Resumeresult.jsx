@@ -25,7 +25,7 @@ export default function Resumeresult() {
         AI Analysis Results
       </h2>
 
-      {/* Overall Score */}
+    
       <section className="bg-gradient-to-r from-blue-500 to-green-500 p-8 shadow-xl m-4 text-white flex justify-between rounded-lg">
         <div>
           <div className="flex items-center gap-2">

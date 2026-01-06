@@ -6,11 +6,12 @@ export default function ContextProvider({children}) {
     
     const[user,setUser]=useState(null);
     const[loading,setLoading]=useState(true);
+    const token=localStorage.getItem('token');
     useEffect(()=>{
          
         const verify= async ()=>{
          
-            const token=localStorage.getItem('token');
+            
             if(!token)
             {
              setLoading(false);
@@ -40,7 +41,7 @@ const logout=()=>{
 }
   return (
     
-      <AuthContext.Provider value={{user,setUser,loading,logout}}>
+      <AuthContext.Provider value={{user,setUser,loading,logout,token}}>
            {children}
       </AuthContext.Provider>
   
