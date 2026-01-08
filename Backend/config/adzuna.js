@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export async function Adzunajob({role}) {
   
-   const searchrole=role&&role.trim().length>0?role:"software developer";
+   const searchrole=role&&role.trim().length>0?role:"";
 
    try{
       const response=await axios.get("https://api.adzuna.com/v1/api/jobs/in/search/1",{

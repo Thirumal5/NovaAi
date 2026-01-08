@@ -26,7 +26,7 @@ export default function JobMatches() {
             },
           }
         );
-        console.log(res)
+        console.log(res.data.jobs)
         setJobs(res.data.jobs || []);
       } catch (err) {
         console.error(err);
