@@ -66,7 +66,10 @@ Rules:
 - skills must be an OBJECT (key = skill name, value = score between 0 and 1)
 - Score reflects proficiency based on experience, projects, and usage
 - overallScore must be between 0 and 10
-
+-nearby location cities for jobs  only cities not state give must 3 cities or 4 cities
+- always return missing skills related to this role or skills or next skills to learn after this
+-always return Areas to improveplans related to this role or skills or next skills to learn or very less score to improve the skills
+-return the experience level according to experience level correctly 
 Return JSON in this exact format:
 
 Return format:
@@ -78,6 +81,7 @@ Return format:
   "missingSkills": [],
   "improvementPlans": [],
   "overallScore": 0
+  "location":[]
 }
 Resume text:
 ${value}`,
@@ -112,6 +116,7 @@ ${value}`,
         strengths:analysis.strengths,
         improvementPlans:analysis.improvementPlans,
         missingSkills:analysis.missingSkills,
+        location:analysis.location,
         overallScore:analysis.overallScore
 }
     )

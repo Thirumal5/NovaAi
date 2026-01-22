@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const ConnectDb=async()=>{
 
     try{
-       await mongoose.connect("mongodb://localhost:27017/");
+       await mongoose.connect("mongodb://localhost:27017/NovaAi");
          
        console.log("Db is connected Successfully")
     }

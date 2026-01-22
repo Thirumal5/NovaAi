@@ -26,6 +26,7 @@ export default function JobMatches() {
             },
           }
         );
+        console.log(res.data.airesponse)
         console.log(res.data.jobs)
         setJobs(res.data.jobs || []);
       } catch (err) {
@@ -60,7 +61,8 @@ export default function JobMatches() {
       </section>
 
       <section className="flex flex-wrap gap-5 justify-around">
-        {jobs.map((job, index) => (
+        {jobs.map((job, index) => 
+          job.company.display_name&&(
           <div
             key={index}
             className="bg-white rounded-xl w-[25%] min-w-[300px] shadow-md p-6 hover:shadow-xl transition mt-5"
@@ -93,7 +95,8 @@ export default function JobMatches() {
               </a>
             </div>
           </div>
-        ))}
+))}
+      
       </section>
     </div>
   );

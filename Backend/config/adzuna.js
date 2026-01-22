@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export async function Adzunajob({role}) {
+export async function Adzunajob({role,location}) {
   
    const searchrole=role&&role.trim().length>0?role:"";
 
@@ -10,7 +10,8 @@ export async function Adzunajob({role}) {
           app_id:process.env.ADZUNA_APP_ID,
           app_key:process.env.ADZUNA_APP_KEY,
           what:searchrole,
-          results_per_page:48,
+          where:location,
+          results_per_page:50,
         }
        
       })

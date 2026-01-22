@@ -31,7 +31,10 @@ const analysisSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-
+    location:{
+      type:[String],
+      default:[]
+    },
     missingSkills: {
       type: [String],
       default: [],
