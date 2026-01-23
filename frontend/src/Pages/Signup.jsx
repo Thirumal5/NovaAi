@@ -56,8 +56,7 @@ export default function Signup() {
       if (response.data.success) {
         toast.success("Registration Successful");
         localStorage.setItem("token", response.data.token);
-        setUser(response.data.user);
-        navigate('/');
+        window.location.href = "/";
       }
     } catch (err) {
       const errorMessage =
