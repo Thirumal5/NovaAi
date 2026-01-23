@@ -21,7 +21,8 @@ const middleware= async (req,res,next)=>{
          if (!user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
        }
-       req.userId=user._id
+       req.user=user
+       req.userId = user._id; 
        next()
       }
       catch (err) {

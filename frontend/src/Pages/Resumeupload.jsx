@@ -12,7 +12,8 @@ import  { Auth } from "../Context/ContextProvider";
 export default function Resumeupload() {
   const fileupload = useRef(null);
   const navigate = useNavigate();
-  const{token}=Auth()
+  const token = localStorage.getItem("token");
+
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
 

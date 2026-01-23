@@ -3,13 +3,14 @@ import User from "../Model/User.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import middleware from "../Middleware/Middleware.js";
+import Analysis from "../Model/Analysis.js";
 const router=Router()
 
 router.post('/signup',async(req,res)=>
-{    const{name,email,password,phonenumber}=req.body;
+{    const{name,email,targetrole,experience,phonenumber,password}=req.body;
    
      try{
-      if (!name ||!email||!password||!phonenumber) {
+      if (!name ||!email||!password||!phonenumber||!targetrole||!experience) {
       return res.status(400).json({
         success: false,
         message: "All fields are required"
@@ -32,22 +33,26 @@ router.post('/signup',async(req,res)=>
               name,
               email,
               password:hashpassword,
-              phonenumber
+              phonenumber,
+              targetrole, 
+              experience
             }
         )
         const token=jwt.sign(
           {id:newUser._id},
           "secertKeyNovaAi123",
-          {expiresIn:"5h"}
+          {expiresIn:"8h"}
           
        
         )
        
-        return res.status(200).json({success:true,token,user:{
-          id:newUser.id,
+        return res.status(201).json({success:true,token,user:{
+          id: newUser._id,
           name:newUser.name,
           email:newUser.email,
-          phonenumber:newUser.phonenumber
+          phonenumber:newUser.phonenumber,
+          targetrole:newUser.targetrole,
+          experience:newUser.experience
 
         }})
 
@@ -63,7 +68,7 @@ router.post('/signin',async(req,res)=>{
      
   try{
      const{email,password}=req.body;
-     const user=await User.findOne({email});
+      
      if(!email||!password)
      {
        return res.status(400).json({
@@ -71,6 +76,7 @@ router.post('/signin',async(req,res)=>{
         message: "All fields are required"
       });
      }
+     const user = await User.findOne({ email }).select("+password");
     if(!user)
         {
           return res.status(401).json({success:false,message:"user does not exists"})
@@ -85,11 +91,8 @@ router.post('/signin',async(req,res)=>{
         "secertKeyNovaAi123",
         {expiresIn: "5h" }
       )
-     return res.status(200).json({success:true,token,user:{id:user._id,
-      name:user.name,
-      email:user.email
-    },message:"Login Sucessfull"
-  })
+      
+     return res.status(200).json({success:true,token,message:"Login Sucessfull"})
   }
   catch(err)
   {
@@ -97,12 +100,28 @@ router.post('/signin',async(req,res)=>{
      return res.status(500).json({success:false,message:"Error in Login"})
   }
 })
-router.get('/me',middleware,async(req,res)=>{
+router.get('/me', middleware, async (req, res) => {
+  try {
+    const analysis = await Analysis.findOne({
+      userId: req.user._id 
+    });
 
-    try {
-    return res.status(200).json({ success: true ,user:req.user});
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        targetrole: req.user.targetrole,
+        matchScore: analysis ? analysis.overallScore : 0
+      }
+    });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Verification failed" });
+    console.error("ME ERROR:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Verification failed"
+    });
   }
-})
+});
+
 export default router;

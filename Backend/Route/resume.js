@@ -80,7 +80,7 @@ Return format:
   "strengths": [],
   "missingSkills": [],
   "improvementPlans": [],
-  "overallScore": 0
+  "overallScore": 0,
   "location":[]
 }
 Resume text:
@@ -107,19 +107,22 @@ ${value}`,
       });
     }
     
-    const savedb=await Analysis.create(
-      {
-        userId:req.userId,
-        experienceLevel:analysis.experienceLevel,
-        skills: newskills(analysis.skills),
-        matchedRoles:analysis.matchedRoles,
-        strengths:analysis.strengths,
-        improvementPlans:analysis.improvementPlans,
-        missingSkills:analysis.missingSkills,
-        location:analysis.location,
-        overallScore:analysis.overallScore
-}
-    )
+   await Analysis.findOneAndUpdate(
+  { userId: req.user._id },
+  {
+    experienceLevel: analysis.experienceLevel,
+    skills: newskills(analysis.skills),
+    matchedRoles: analysis.matchedRoles,
+    strengths: analysis.strengths,
+    improvementPlans: analysis.improvementPlans,
+    missingSkills: analysis.missingSkills,
+    location: analysis.location,
+    overallScore: analysis.overallScore,
+  },
+  { upsert: true, new: true }
+);
+
+    
    
     res.status(200).json({
       success: true,

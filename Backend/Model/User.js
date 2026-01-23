@@ -12,9 +12,19 @@ const UserSchema=new mongoose.Schema(
         required:true,
         unique:true,
       },
+      targetrole:{
+       type:String,
+        required:true,
+      },
+      experience:{
+       type:String,
+       required:true,
+
+      },
       password:{
         type:String,
-        required:true
+        required:true,
+         select: false
       }
       ,
       phonenumber:{
