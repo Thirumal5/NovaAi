@@ -4,7 +4,7 @@ import {  Router } from "express";
 import AIAnalysis from "../Model/Analysis.js";
 import { Adzunajob } from "../config/adzuna.js";
 import middleware from "../Middleware/Middleware.js";
-import OpenAI from "openai";
+
 import filterjobs from '../logics/filterjobs.js'
 import User from "../Model/User.js";
 const route = Router();
@@ -52,15 +52,7 @@ route.get("/jobs", middleware, async (req, res) => {
         uniqueJobsMap.set(key, job);
       }
     }
-    const normaliziedskills = Object.keys(analysis.skills || {}).map(
-      skill =>
-        skill
-          .toLowerCase()
-          .replace(/_/g, " ")
-          .replace("js", "")
-          .replace("css", "")
-          .trim()
-    );
+    
    
     const jobs = Array.from(uniqueJobsMap.values());
 
@@ -89,5 +81,3 @@ route.get("/jobs", middleware, async (req, res) => {
 });
 
 export default route;
-
-

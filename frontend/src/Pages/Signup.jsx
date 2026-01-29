@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { Auth } from '../Context/ContextProvider';
 
 export default function Signup() {
-  const { user, setUser } = Auth();
+ 
 
   const [name, setName] = useState('');
   const [showpassword,setshowPassword]=useState(false);
@@ -21,7 +21,7 @@ export default function Signup() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();

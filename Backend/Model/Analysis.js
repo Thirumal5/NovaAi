@@ -7,7 +7,10 @@ const analysisSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
+   resumetext:{
+    type:String
+   }
+   ,
     experienceLevel: {
       type: String,
     },

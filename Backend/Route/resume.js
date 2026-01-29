@@ -24,7 +24,7 @@ function newskills(skills)
   }
   return sanitizedskills;
 }
-route.post("/resumeAnalyzer", middleware,upload.single("resume"), async (req, res) => {
+route.post("/resumeAnalyzer",middleware,upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -32,17 +32,13 @@ route.post("/resumeAnalyzer", middleware,upload.single("resume"), async (req, re
         message: "Resume file is required",
       });
     }
+  let resumeText = "";
 
-    const { value } = await mammoth.extractRawText({
-      buffer: req.file.buffer,
-    });
-
-    if (!value || value.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Could not extract text from resumes",
-      });
-    }
+ 
+  const { value } = await mammoth.extractRawText({
+    buffer: req.file.buffer,
+  });
+  resumeText = value;
 
     const client = new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
@@ -107,9 +103,10 @@ ${value}`,
       });
     }
     
-   await Analysis.findOneAndUpdate(
-  { userId: req.user._id },
+  await Analysis.findOneAndUpdate(
+  { userId: req.userId },
   {
+    resumeText: resumeText,
     experienceLevel: analysis.experienceLevel,
     skills: newskills(analysis.skills),
     matchedRoles: analysis.matchedRoles,
@@ -122,9 +119,8 @@ ${value}`,
   { upsert: true, new: true }
 );
 
-    
-   
-    res.status(200).json({
+
+  res.status(200).json({
       success: true,
       analysis,
     });

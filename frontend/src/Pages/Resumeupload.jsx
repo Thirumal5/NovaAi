@@ -1,12 +1,13 @@
-import React, { useState, useRef ,useEffect} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { HiArrowLeft } from "react-icons/hi2";
 import { LuUpload } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import { FaFileAlt } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
+import { HiSparkles } from "react-icons/hi2";
 import axios from "axios";
 import { toast } from "react-toastify";
-import  { Auth } from "../Context/ContextProvider";
+
 
 
 export default function Resumeupload() {
@@ -22,11 +23,11 @@ export default function Resumeupload() {
   };
 
   useEffect(() => {
-  if (!token) {
-    toast.error("Please login to upload resume");
-    navigate("/signin");
-  }
-}, [token, navigate]);
+    if (!token) {
+      toast.error("Please login to upload resume");
+      navigate("/signin");
+    }
+  }, [token, navigate]);
 
   const fileanalyze = async () => {
     if (!resume) {
@@ -34,7 +35,7 @@ export default function Resumeupload() {
       return;
     }
 
-   
+
     if (resume.size > 5 * 1024 * 1024) {
       toast.error("Resume must be under 5MB");
       return;
@@ -42,7 +43,7 @@ export default function Resumeupload() {
 
     const resumedata = new FormData();
     resumedata.append("resume", resume);
-    
+
 
     try {
       setLoading(true);
@@ -52,11 +53,11 @@ export default function Resumeupload() {
         "http://localhost:5000/api/resume/resumeAnalyzer",
         resumedata,
         {
-      headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  }
+          headers: {
+            Authorization: `Bearer ${token}`,
+
+          },
+        }
       );
       console.log(response.data.analysis)
       if (response.data.success) {
@@ -77,113 +78,122 @@ export default function Resumeupload() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 md:p-8">
-      
-     
-      <Link to="/">
-        <button className="flex gap-2 items-center border border-blue-500 text-blue-500 p-2 rounded-lg w-24 hover:bg-blue-500 hover:text-white transition">
-          <HiArrowLeft /> Back
-        </button>
-      </Link>
+    <div className='min-h-screen bg-[#0f172a] text-white p-6 md:p-10 font-["Outfit"]'>
 
-     
-      {loading ? (
-        <div className="flex justify-center items-center min-h-screen gap-2">
-          <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-          <span className="text-blue-500">AI is analyzing your resume...</span>
-        </div>
-      ) : (
-        <div className="flex justify-center mt-10">
-          <div className="bg-white shadow-lg border-dotted border-gray-300 border-4 w-[70%] p-6">
-            
-           
-            {resume ? (
-              <div className="flex flex-col items-center gap-6">
-                <div className="flex justify-between items-center w-full bg-blue-50 p-4 rounded">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-gradient-to-r from-blue-500 to-green-500 h-12 w-12 rounded-full flex justify-center items-center">
-                      <FaFileAlt className="text-white text-xl" />
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto">
+        <Link to="/">
+          <button className="flex items-center gap-2 text-sm px-4 py-2 rounded-xl glass hover:bg-white/10 transition border border-white/10 mb-8">
+            <HiArrowLeft /> Back to Home
+          </button>
+        </Link>
+
+        {loading ? (
+          <div className="glass p-10 rounded-3xl border border-white/10 flex flex-col items-center justify-center min-h-[400px]">
+            <div className="relative w-20 h-20 mb-6">
+              <div className="absolute inset-0 rounded-full border-4 border-blue-500/30"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-blue-500 animate-spin"></div>
+            </div>
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">Analyzing Resume...</h2>
+            <p className="text-white/60 mt-2 text-center max-w-md">Our AI is extracting your skills, experience, and matching you with the best opportunities.</p>
+          </div>
+        ) : (
+          <div className="block">
+            <div className="glass p-1 p-8 rounded-3xl border border-white/10 shadow-2xl">
+
+              {resume ? (
+                <div className="flex flex-col items-center gap-8 py-8">
+                  <div className="w-full bg-white/5 rounded-2xl p-6 flex items-center justify-between border border-white/10">
+                    <div className="flex items-center gap-5">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                        <FaFileAlt className="text-white text-3xl" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-white">{resume.name}</h3>
+                        <p className="text-white/50 text-sm">{(resume.size / 1024).toFixed(2)} KB</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold">{resume.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {(resume.size / 1024).toFixed(2)} KB
-                      </p>
-                    </div>
+                    <button
+                      onClick={() => setResume(null)}
+                      className="p-3 rounded-full hover:bg-white/10 text-white/60 hover:text-red-400 transition"
+                    >
+                      <GiCancel className="text-2xl" />
+                    </button>
                   </div>
-                  <GiCancel
-                    className="cursor-pointer text-xl"
-                    onClick={() => setResume(null)}
+
+                  <div className="w-full glass bg-blue-500/5 rounded-2xl p-8 border border-blue-500/10">
+                    <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                      <HiSparkles /> Prediction Preview
+                    </h2>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {['Technical Skills Extraction', 'Experience & Projects Analysis', 'Education Verification', 'Job Market Alignment'].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-white/70">
+                          <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">✓</div>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={fileanalyze}
+                    className="w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-blue-600 to-emerald-600 hover:scale-[1.01] transition-all shadow-lg hover:shadow-blue-500/25"
+                  >
+                    Start Analysis
+                  </button>
+                </div>
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center text-center">
+                  <div
+                    onClick={uploadfile}
+                    className="w-32 h-32 rounded-full bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center cursor-pointer hover:bg-white/10 hover:border-blue-500/50 hover:scale-105 transition-all group mb-6"
+                  >
+                    <LuUpload className="text-4xl text-white/40 group-hover:text-blue-400 transition-colors" />
+                  </div>
+
+                  <h2 className="text-3xl font-bold text-white mb-2">Upload Your Resume</h2>
+                  <p className="text-white/50 mb-8">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+
+                  <input
+                    type="file"
+                    accept=".doc,.docx,.pdf"
+                    ref={fileupload}
+                    hidden
+                    onChange={(e) => e.target.files && setResume(e.target.files[0])}
                   />
+
+                  <button
+                    onClick={uploadfile}
+                    className="px-8 py-3 rounded-xl font-bold text-white bg-white/10 border border-white/10 hover:bg-white/20 transition-all"
+                  >
+                    Browse Files
+                  </button>
                 </div>
+              )}
+            </div>
 
-                <div className="bg-blue-50 p-6 w-full rounded">
-                  <h2 className="font-bold text-blue-500 mb-3">
-                    What we’ll analyze
-                  </h2>
-                  <ul className="space-y-2">
-                    <li>✔ Technical skills & proficiency</li>
-                    <li>✔ Experience & projects</li>
-                    <li>✔ Education & certifications</li>
-                    <li>✔ Job market alignment</li>
-                  </ul>
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="glass p-6 rounded-2xl border border-white/10 flex items-start gap-4">
+                <div className="text-2xl">💡</div>
+                <div>
+                  <h3 className="font-bold text-white mb-1">Smart Tips</h3>
+                  <p className="text-sm text-white/50">Ensure high scanability by using standard headings and clear bullet points.</p>
                 </div>
-
-                <button
-                  onClick={fileanalyze}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-lg"
-                >
-                  Analyze Resume
-                </button>
               </div>
-            ) : (
-             
-              <div className="flex flex-col items-center gap-4">
-                <button
-                  onClick={uploadfile}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 h-16 w-16 rounded-full flex justify-center items-center"
-                >
-                  <LuUpload className="text-white text-3xl" />
-                </button>
-
-                <input
-                  type="file"
-                  accept=".doc,.docx"
-                  ref={fileupload}
-                  hidden
-                  onChange={(e) =>
-                    e.target.files && setResume(e.target.files[0])
-                  }
-                />
-
-                <h2 className="font-semibold">Upload your resume</h2>
-                <p className="text-sm text-gray-500">
-                  DOC / DOCX only (Max 5MB)
-                </p>
-
-                <button
-                  onClick={uploadfile}
-                  className="bg-gradient-to-r from-blue-500 to-green-500 text-white px-6 py-2 rounded-lg"
-                >
-                  Browse Files
-                </button>
+              <div className="glass p-6 rounded-2xl border border-white/10 flex items-start gap-4">
+                <div className="text-2xl">⚡</div>
+                <div>
+                  <h3 className="font-bold text-white mb-1">Instant Match</h3>
+                  <p className="text-sm text-white/50">Our AI matches you with real-time job openings immediately after analysis.</p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      )}
-
-      
-      <div className="flex justify-center mt-8">
-        <div className="bg-white w-[70%] shadow-lg p-6">
-          <h2 className="font-bold mb-4">💡 Tips for Better Results</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <p>✔ Use a well-formatted recent resume</p>
-            <p>✔ List quantifiable achievements</p>
-            <p>✔ Include specific technical skills</p>
-            <p>✔ Keep it under 2 pages</p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

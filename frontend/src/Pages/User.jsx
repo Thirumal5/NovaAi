@@ -12,59 +12,78 @@ export default function User() {
   const score = Math.round(user.matchScore * 10);
 
   return (
-    <div className="min-h-screen bg-[#0f172a] px-6 md:px-16 py-12 text-white">
-      
-      <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-10 shadow-2xl">
-        
-        <div className="w-28 h-28 rounded-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center text-4xl shadow-lg">
+    <div className="w-full text-white">
+
+      <div className="relative glass rounded-3xl p-8 flex flex-col md:flex-row items-center gap-10">
+
+        <div className="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 flex items-center justify-center text-4xl shadow-[0_0_20px_rgba(59,130,246,0.3)] border-2 border-white/20">
           👨‍🎓
         </div>
 
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-4xl font-bold tracking-tight">
+          <h1 className="text-xl text-black ">
             {user.name}
           </h1>
-          <p className="text-white/70 text-lg mt-1">
+          <p className="text-blue-300 text-lg mt-2 font-medium">
             {user.targetrole}
           </p>
         </div>
 
-        <div className="relative w-24 h-24 mb-10">
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              background: `conic-gradient(#10B981 ${score * 3.6}deg, rgba(255,255,255,0.1) 0deg)`
-            }}
-          />
-          <div className="absolute inset-3 rounded-full bg-[#0f172a] flex items-center justify-center ">
-            <span className="text-xl font-bold">{user.matchScore*10}%</span>
+        <div className="relative w-28 h-28">
+          <svg className="w-full h-full transform -rotate-90">
+            <circle
+              cx="50%"
+              cy="50%"
+              r="45%"
+              fill="transparent"
+              stroke="#1e293b"
+              strokeWidth="8"
+            />
+            <circle
+              cx="50%"
+              cy="50%"
+              r="45%"
+              fill="transparent"
+              stroke="url(#gradient)"
+              strokeWidth="8"
+              strokeDasharray="283"
+              strokeDashoffset={283 - (283 * score) / 100}
+              strokeLinecap="round"
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#3B82F6" />
+                <stop offset="100%" stopColor="#10B981" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold text-blue-300">{score}%</span>
+            <span className="text-[10px] text-white/50 uppercase">Match</span>
           </div>
-          <p className="absolute -bottom-10 left-1/2 -translate-x-1/2 text-sm text-white/70 ">
-            Match Score
-          </p>
         </div>
       </div>
 
-      <div className="mt-16 relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-500/20 to-green-500/20 border border-white/10 backdrop-blur-xl p-10 flex flex-col md:flex-row items-center justify-between gap-8">
-        
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 blur-3xl" />
+      <div className="mt-8 relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-emerald-600 p-[1px]">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-emerald-600 blur-xl opacity-40"></div>
+        <div className="relative bg-[#0f172a]/90 backdrop-blur-xl rounded-[23px] p-8 flex flex-col md:flex-row items-center justify-between gap-8 h-full">
+          <div className="relative z-10">
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+              Upload Your Resume
+            </h2>
+            <p className="text-white/60 mt-2 text-md max-w-xl leading-relaxed">
+              Get AI-powered resume analysis and personalized job matches
+              tailored to your skills and experience.
+            </p>
+          </div>
 
-        <div className="relative z-10">
-          <h2 className="text-3xl font-bold">
-            Upload Your Resume
-          </h2>
-          <p className="text-white/70 mt-2 text-lg max-w-xl">
-            Get AI-powered resume analysis and personalized job matches
-            tailored to your skills and experience.
-          </p>
+          <Link to="/Resumeupload" className="relative z-10">
+            <button className="group flex items-center gap-3 bg-white text-slate-900 px-8 py-3 rounded-xl font-bold text-md hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+              <LuUpload className="text-xl group-hover:rotate-12 transition-transform" />
+              Upload Resume
+            </button>
+          </Link>
         </div>
-
-        <Link to="/Resumeupload" className="relative z-10">
-          <button className="flex items-center gap-3 bg-gradient-to-r from-blue-500 to-green-500 px-8 py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition shadow-lg">
-            <LuUpload className="text-2xl" />
-            Upload Resume
-          </button>
-        </Link>
       </div>
     </div>
   );

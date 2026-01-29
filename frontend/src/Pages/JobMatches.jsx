@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { HiArrowLeft } from "react-icons/hi2";
@@ -49,7 +50,7 @@ export default function JobMatches() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white px-6 md:px-16 py-10">
 
-      {/* Top Bar */}
+     
       <div className="flex items-center justify-between mb-10">
         <Link to="/">
           <button className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition">
@@ -62,7 +63,7 @@ export default function JobMatches() {
         </h1>
       </div>
 
-      {/* Stats Card */}
+     
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500/20 to-green-500/20 border border-white/10 backdrop-blur-xl p-10 mb-14">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10 blur-3xl" />
         <h2 className="text-6xl font-extrabold">
@@ -73,7 +74,7 @@ export default function JobMatches() {
         </p>
       </div>
 
-      {/* Empty State */}
+  
       {jobs.length === 0 ? (
         <div className="text-center mt-24">
           <p className="text-2xl font-semibold">
@@ -91,7 +92,7 @@ export default function JobMatches() {
                 key={index}
                 className="group relative rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl p-7 hover:scale-[1.03] transition-all duration-300"
               >
-                {/* Glow */}
+                
                 <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition" />
 
                 <div className="relative z-10">
