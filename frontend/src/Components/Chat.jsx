@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../assets/chatbotlogo.jpeg'
 
 
@@ -7,24 +7,48 @@ function Chat(){
     const[message,Setmessage]=useState([])
     const[input,Setinput]=useState('');
     const[loading,setLoading]=useState(false);
-    function handleclick()
+     
+  async function handleclick()
     {
+        
         if(!input.trim())
             return;
        const newMessage = {
          text: input,
            sender: "user"
           };
-        Setmessage(prev=>[...prev,newMessage])
-         setTimeout(()=>{
+          Setmessage(prev=>[...prev,newMessage])
+            Setinput("")
+            setLoading(true)
+          try{
+            
+          const res=await fetch('http://localhost:5000/api/chat',
+            {
+                method:"POST",
+                headers:{
+                    "content-type":"application/json",
+                },
+                body:JSON.stringify({message:input}),
+                
+            }
+          )
+          const data=await res.json()
+
             const botmessage={
-                text:"Hi How can I help U",
-                sender:"Nova Ai"
+                text:data.airesponse,
+                sender:"bot"
             }
             Setmessage(prev=>[...prev,botmessage])
-         },1000)
-         
-        Setinput("")
+         }
+          catch(err)
+          {
+            Setmessage(prev=>[...prev,{text:"Novai Ai error",sender:"bot"}])
+          }
+          finally
+          {
+            setLoading(false)
+          }
+       
     }
     return (
         <>
@@ -51,13 +75,21 @@ function Chat(){
                       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-32">
                      <div className="w-full">
                        {message.map((msg, index) => (
-                   <div key={index} className={`flex ${msg.sender==='user'?"justify-end":"justify-"} my-2`}>
+                   <div key={index} className={`flex ${msg.sender==='user'?"justify-end":"justify-start"} my-2`}>
                 <div className={`${msg.sender === "user" ? "bg-blue-600" : "bg-slate-700"} px-4 py-2 rounded-xl max-w-[70%] text-white`}>
 
                                  {msg.text}
                     </div>
                          </div>
                         ))}
+                        {
+                                loading&&(
+                        <div className='flex justify-start my-2'>
+                            <div className='text-white bg-slate-700 px-4 py-2 rounded-xl'>
+                               <p>Novai Ai is typing</p>
+                                </div>
+                           </div>
+                                )}
                     </div>
                  </div>
 

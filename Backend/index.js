@@ -7,6 +7,7 @@ import resumerouter from "./Route/resume.js"
 import router from "./Route/Auth.js"
 import matchroute from './Route/job.js'
 import Analysisroute from './Route/latestAnalysis.js'
+import Aichatroute from './Route/Aichat.js'
 const app = express()
 
 app.use(express.json())
@@ -16,7 +17,7 @@ app.use("/api/auth", router)
 app.use("/api/resume", resumerouter)
 app.use('/api/analysis',Analysisroute)
 app.use('/api/match',matchroute)
-
+app.use('/api',Aichatroute)
 
 
 
