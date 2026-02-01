@@ -19,7 +19,7 @@ function Chat(){
          setTimeout(()=>{
             const botmessage={
                 text:"Hi How can I help U",
-                sender:"Ai"
+                sender:"Nova Ai"
             }
             Setmessage(prev=>[...prev,botmessage])
          },1000)
