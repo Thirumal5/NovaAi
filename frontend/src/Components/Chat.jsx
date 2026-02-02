@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import logo from '../assets/chatbotlogo.jpeg'
-
+import ReactMarkdown from "react-markdown";
 
 
 function Chat(){
     const[message,Setmessage]=useState([])
     const[input,Setinput]=useState('');
     const[loading,setLoading]=useState(false);
-     
+     const token=localStorage.getItem('token')
+     if (!token) {
+  alert("Please login again");
+  return;
+}
   async function handleclick()
     {
         
@@ -27,6 +31,7 @@ function Chat(){
                 method:"POST",
                 headers:{
                     "content-type":"application/json",
+                    "Authorization":`Bearer ${token}`
                 },
                 body:JSON.stringify({message:input}),
                 
@@ -78,7 +83,12 @@ function Chat(){
                    <div key={index} className={`flex ${msg.sender==='user'?"justify-end":"justify-start"} my-2`}>
                 <div className={`${msg.sender === "user" ? "bg-blue-600" : "bg-slate-700"} px-4 py-2 rounded-xl max-w-[70%] text-white`}>
 
-                                 {msg.text}
+                                <div className='prose prose-invert'>
+                                    <ReactMarkdown>
+                                        {msg.text}
+                                    </ReactMarkdown>
+                                </div>
+
                     </div>
                          </div>
                         ))}
@@ -90,6 +100,7 @@ function Chat(){
                                 </div>
                            </div>
                                 )}
+
                     </div>
                  </div>
 

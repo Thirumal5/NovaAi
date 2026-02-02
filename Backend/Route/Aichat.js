@@ -1,90 +1,104 @@
 import { Router } from "express";
 import OpenAI from "openai";
+import middleware from "../Middleware/Middleware.js";
+import Analysis from "../Model/Analysis.js";
+
 const route = Router();
 
-const openai = new OpenAI(
-    {
-        apiKey: process.env.GROQ_API_KEY,
-        baseURL: "https://api.groq.com/openai/v1"
-    })
-route.post('/chat', async (req, res) => {
+const openai = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
+});
 
-    try {
-        const { message } = req.body;
+route.post("/chat", middleware, async (req, res) => {
+  try {
+    const { message } = req.body;
 
-        const response = await openai.chat.completions.create(
-            {
-                model: "llama-3.3-70b-versatile",
-                messages: [
+    const resumedata = await Analysis.findOne(
+      { userId: req.userId },
+      { resumetext: 1 }
+    );
 
-                    {
-                        role: "system",
-                        content:
-                            `
-                       You are Nova-AI, a professional AI assistant for students and job seekers.
+    const resumecontent = resumedata?.resumetext
+      ? resumedata.resumetext
+      : "No resume uploaded yet";
+  console.log(resumecontent);
+    const response = await openai.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        
+          {
+  role: "system",
+  content: `
+You are Nova-AI, a professional AI assistant for students and job seekers.
 
-Your identity:
+IDENTITY:
 - Your name is Nova-AI
-- Never say “I don’t have a name”
-- Always introduce yourself when user greets (hi, hello, hlo, hey)
+- Always introduce yourself on greeting
 
-Your role:
-- Teach programming (Java, React, DSA, CS basics)
-- Help with ATS-friendly resume preparation
-- Create study plans and learning roadmaps
-- Clear doubts in a simple, student-friendly way
+CONVERSATION RULES (VERY IMPORTANT):
 
-Response rules (VERY IMPORTANT):
-VERY IMPORTANT FORMAT RULE:
-- NEVER write long paragraphs
-- Every response must be in:
-  - Headings
-  - Bullet points
-  - Numbered steps
-- Maximum 1 line per bullet
-- If explanation is needed, split into multiple bullets
-- Do NOT write paragraph-style text
--
+GREETING RULE:
+If user message is only:
+"hi", "hello", "hlo", "hey"
 
-Tone:
-- Friendly
-- Calm
-- Mentor-like
-- Easy English (optionally Tamil + English mix)
+Reply ONLY with:
+## Introduction
+- Hi 👋 I’m Nova-AI
+- I help with resume, study plans, and career guidance
+- What do you want to do today?
 
-Greeting behavior:
-If user says "hi", "hello", or greets:
-- Reply with:
-  "Hi 👋 I’m Nova-AI.
-   I help with resume analysis, study planning, and programming doubts.
-   Tell me what you want to learn."
+RESUME RULE:
+- Use resume data ONLY if user explicitly asks
+- If not asked → DO NOT mention resume
 
-Formatting:
-- Do NOT use ====, **** randomly
-- Use clean Markdown:
-  - ## for headings
-  - - for bullet points
+2️⃣ RESUME MODE:
+- Use resume data ONLY if user asks about:
+  - resume
+  - CV
+  - improve resume
+  - skills
+  - study plan
+  - career
+  - jobs
+- If resume is missing:
+  - Say resume not uploaded
 
-                              `
+OUTPUT FORMAT RULES (STRICT):
+- No paragraphs
+- Use only:
+  - ## Headings
+  - - Bullet points
+- One idea per bullet
+- Simple English (Tamil + English allowed)
 
+FAILURE RULE:
+- If resume is mentioned during greeting → response is INVALID
+`
+},
+        {
+          role: "user",
+          content: `
+USER QUESTION:
+${message}
 
+USER RESUME TEXT:
+${resumecontent}
 
-                    },
-                    {
-                        role: "user",
-                        content: message
-                    }
-                ]
+RULES:
+- Use ONLY the resume text above if user asked about resume or study plan only use and prepare according to it answer them 
+- Suggest resume improvements if needed
+- Give study plan based on resume only
+          `,
+        },
+      ],
+    });
 
-            }
-        )
-        res.json({ airesponse: response.choices[0].message.content })
-    }
-    catch (err) {
-        res.status(500).json({ error: "Ai failed" });
-    }
+    res.json({ airesponse: response.choices[0].message.content });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "AI failed" });
+  }
+});
 
-
-
-})
 export default route;

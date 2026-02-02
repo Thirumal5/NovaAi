@@ -106,7 +106,7 @@ ${value}`,
   await Analysis.findOneAndUpdate(
   { userId: req.userId },
   {
-    resumeText: resumeText,
+    resumetext: resumeText,
     experienceLevel: analysis.experienceLevel,
     skills: newskills(analysis.skills),
     matchedRoles: analysis.matchedRoles,
