@@ -2,6 +2,7 @@ import { Router } from "express";
 import OpenAI from "openai";
 import middleware from "../Middleware/Middleware.js";
 import Analysis from "../Model/Analysis.js";
+import Job from "../Model/jobs.js";
 
 const route = Router();
 
@@ -19,63 +20,42 @@ route.post("/chat", middleware, async (req, res) => {
       { resumetext: 1 }
     );
 
+    const jobs = await Job.find({ userId: req.userId })
+      .select("title companyname location salary description applyurl")
+      .limit(15);
+
+    const jobText =
+      jobs.length > 0
+        ? jobs
+            .map(
+              (job, i) =>
+                `${i + 1}. ${job.title} at ${job.companyname}, ${job.location}, Salary: ${job.salary} description:${job.description}`
+            )
+            .join("\n")
+        : "No jobs available";
+
     const resumecontent = resumedata?.resumetext
       ? resumedata.resumetext
       : "No resume uploaded yet";
-  console.log(resumecontent);
+
     const response = await openai.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
-        
-          {
-  role: "system",
-  content: `
+        {
+          role: "system",
+          content: `
 You are Nova-AI, a professional AI assistant for students and job seekers.
 
-IDENTITY:
-- Your name is Nova-AI
-- Always introduce yourself on greeting
-
-CONVERSATION RULES (VERY IMPORTANT):
-
 GREETING RULE:
-If user message is only:
-"hi", "hello", "hlo", "hey"
+If user message is only hi/hello/hey
+Reply ONLY with introduction.
 
-Reply ONLY with:
-## Introduction
-- Hi 👋 I’m Nova-AI
-- I help with resume, study plans, and career guidance
-- What do you want to do today?
-
-RESUME RULE:
-- Use resume data ONLY if user explicitly asks
-- If not asked → DO NOT mention resume
-
-2️⃣ RESUME MODE:
-- Use resume data ONLY if user asks about:
-  - resume
-  - CV
-  - improve resume
-  - skills
-  - study plan
-  - career
-  - jobs
-- If resume is missing:
-  - Say resume not uploaded
-
-OUTPUT FORMAT RULES (STRICT):
+FORMAT RULES:
+- Only headings and bullet points
 - No paragraphs
-- Use only:
-  - ## Headings
-  - - Bullet points
-- One idea per bullet
-- Simple English (Tamil + English allowed)
-
-FAILURE RULE:
-- If resume is mentioned during greeting → response is INVALID
-`
-},
+- Simple English (Tamil + English ok)
+          `,
+        },
         {
           role: "user",
           content: `
@@ -85,10 +65,8 @@ ${message}
 USER RESUME TEXT:
 ${resumecontent}
 
-RULES:
-- Use ONLY the resume text above if user asked about resume or study plan only use and prepare according to it answer them 
-- Suggest resume improvements if needed
-- Give study plan based on resume only
+JOBS MATCHED:
+${jobText}
           `,
         },
       ],

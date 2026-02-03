@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import Job from "../Model/jobs.js";
 dotenv.config();
 import {  Router } from "express";
 import AIAnalysis from "../Model/Analysis.js";
@@ -11,7 +12,7 @@ const route = Router();
 
   
 
-route.get("/jobs", middleware, async (req, res) => {
+route.post("/", middleware, async (req, res) => {
   try {
    
    
@@ -66,9 +67,39 @@ route.get("/jobs", middleware, async (req, res) => {
 }
     const userexperience=user.experience
    const filteredjobs=filterjobs(jobs,userexperience);
+
+   
+   let totaljobs=0;
+   for(const job of filteredjobs)
+   {
+    const exists=await Job.findOne({userId:req.userId,jobId:job.id})
+
+    if(exists)
+      continue;
+    await Job.create(
+      {
+        userId:req.userId,
+        jobId:job.id,
+        title:job.title,
+        companyname:job.company?.display_name||"unknown",
+        location:job.location?.display_name||"Unknown",
+        applyurl:job.redirect_url||job.adref,
+        skills:job.category?.label ? [job.category.label] : [],
+        description:job.description,
+        experienceLevel: user.experience,
+           salary:
+          job.salary_min && job.salary_max
+            ? `${job.salary_min}-${job.salary_max}`
+            : "Not disclosed",
+        source: "Adzuna",
+      }
+    )
+    totaljobs++;
+   }
     return res.json({
       success: true,
-       jobs:filteredjobs
+       jobs:filteredjobs,
+       jobscount:totaljobs
     });
 
   } catch (err) {

@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../assets/chatbotlogo.jpeg";
 import ReactMarkdown from "react-markdown";
+import { HiArrowLeft } from "react-icons/hi2";
+import { Link, useNavigate } from "react-router-dom";
 
 function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Please login again");
-    return null;
-  }
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/signin");
+    }
+  }, [token, navigate]);
 
   async function handleclick() {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
     const userMessage = {
       text: input,
@@ -32,10 +37,14 @@ function Chat() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: userMessage.text }),
       });
 
       const data = await res.json();
+
+      if (!res.ok || !data.airesponse) {
+        throw new Error("AI response failed");
+      }
 
       const botMessage = {
         text: data.airesponse,
@@ -46,7 +55,7 @@ function Chat() {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { text: "⚠️ Nova-AI error. Try again.", sender: "bot" },
+        { text: "⚠️ Nova-AI error. Please try again.", sender: "bot" },
       ]);
     } finally {
       setLoading(false);
@@ -56,6 +65,14 @@ function Chat() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-950 to-black">
       <div className="h-[70px] bg-slate-900/80 backdrop-blur sticky top-0 z-50 flex items-center justify-center border-b border-slate-700">
+        <div className="absolute left-2">
+          <Link to="/">
+            <button className="flex text-white items-center gap-2 text-sm px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition">
+              <HiArrowLeft /> Back
+            </button>
+          </Link>
+        </div>
+
         <div className="h-[48px] w-[48px] rounded-full mr-3 relative">
           <img
             src={logo}
@@ -88,7 +105,7 @@ function Chat() {
                     : "bg-slate-800 border border-slate-700"
                 }`}
               >
-                <div className="prose prose-invert  text-sm">
+                <div className="prose prose-invert text-sm">
                   <ReactMarkdown>{msg.text}</ReactMarkdown>
                 </div>
               </div>
@@ -119,7 +136,8 @@ function Chat() {
 
             <button
               onClick={handleclick}
-              className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:scale-105 transition-transform w-11 h-11 rounded-xl flex items-center justify-center text-white"
+              disabled={loading}
+              className="bg-gradient-to-r from-blue-600 to-emerald-600 hover:scale-105 transition-transform w-11 h-11 rounded-xl flex items-center justify-center text-white disabled:opacity-50"
             >
               ➤
             </button>
