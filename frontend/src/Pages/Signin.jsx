@@ -4,6 +4,7 @@ import { HiArrowRight } from "react-icons/hi2";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
+import logo from "../assets/loopAi.png";
 
 export default function Signin() {
   const [email, setEmail] = useState("");
@@ -34,11 +35,13 @@ export default function Signin() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
       <div className="bg-white w-[390px] h-[550px] p-8 mb-10 rounded-lg shadow">
         <div className="flex flex-col justify-center items-center gap-2">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-[#3B82F6] to-[#10B981] mb-4">
-            <span className="text-2xl text-white">🎓</span>
+          <div className="inline-flex items-center justify-center w-26 h-26 rounded-full mb-4">
+            <span className="text-2xl text-white">
+              <img src={logo} alt="CareerLoopAI Logo" className="w-30 h-30 object-contain" />
+            </span>
           </div>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-[#3B82F6] to-[#10B981] bg-clip-text text-transparent">
-            Nova Ai
+            CarrerLoopAi
           </h2>
           <p className="text-sm text-gray-600">
             Welcome back! Sign in to continue
@@ -89,7 +92,7 @@ export default function Signin() {
           </button>
 
           <div className="flex gap-2 justify-center mt-3">
-            <p>New to Nova Ai?</p>
+            <p>New to  CarrerLoopAi?</p>
             <Link to="/signup" className="text-[#3B82F6] hover:font-medium">
               Create an account
             </Link>

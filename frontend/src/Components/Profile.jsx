@@ -48,7 +48,12 @@ export default function Profile() {
   }, []);
 
   if (loading)
-    return <p className="p-6">Loading profile...</p>;
+    <div className="min-h-screen flex flex-col justify-center items-center bg-[#0f172a] text-white">
+        <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        <p className="mt-4 text-lg tracking-wide">
+          Loading profile 
+        </p>
+      </div>
 
   if (error)
     return <p className="text-red-500 p-6">{error}</p>;
@@ -63,8 +68,9 @@ export default function Profile() {
             </button>
           </Link>
 
-          <div className="text-white text-xl font-semibold">
-            NovaAI
+          <div className=" font-inter  text-white text-xl font-semibold ml-30">
+           CarrerLoopAi
+           
           </div>
         </div>
 

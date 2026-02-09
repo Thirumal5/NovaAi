@@ -1,66 +1,100 @@
-import { JobMatches } from "./data";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function RecentMatches() {
+  const [job, setjob] = useState([]);
+
+  useEffect(() => {
+    const jobfetch = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const { data } = await axios.get(
+          "http://localhost:5000/api/jobmatched",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setjob(data?.jobs || []);
+      } catch (err) {
+        console.log("Error fetching jobs");
+      }
+    };
+
+    jobfetch();
+  }, []);
+
   return (
-    <div>
-      <h2 className="font-bold text-2xl text-gray-800 tracking-tight">
+    <div className="mt-12">
+      <h2 className="text-3xl font-bold text-gray-800 tracking-tight mb-8">
         Recent Matches
       </h2>
 
-      <div className="mt-6 px-2 py-2 flex gap-6 flex-wrap">
-        {JobMatches.map((job) => (
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {job.map((j, i) => (
           <div
-            key={job.id}
+            key={i}
             className="
-              mb-6
-              w-[32%]
-              min-w-[300px]
               bg-white
-              h-44
               rounded-2xl
+              p-6
               shadow-md
               hover:shadow-xl
-              transition-all duration-300
               border border-gray-100
+              transition-all duration-300
               hover:-translate-y-1
-              p-5
+              flex flex-col justify-between
             "
           >
-            <div className="flex justify-between items-center mt-2">
-              <div>
-                <h2 className="text-lg font-bold text-gray-800">
-                  {job.company}
-                </h2>
-                <h3 className="text-sm text-gray-500 mt-1">
-                  {job.role}
-                </h3>
-              </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                {j.companyname}
+              </h2>
 
-              <button
+              <p className="text-gray-600 mt-1 text-sm">
+                {j.title || "Role"}
+              </p>
+
+              <p className="text-gray-500 text-sm mt-2">
+                📍 {j.location || "Location"}
+              </p>
+
+              <span className="
+                inline-block mt-3
+                bg-indigo-100 text-indigo-700
+                px-3 py-1 rounded-full
+                text-xs font-semibold
+              ">
+                {j.experienceLevel ||"NA"}
+              </span>
+            </div>
+
+            {j.applyurl && (
+              <a
+                href={j.applyurl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="
-                  bg-gradient-to-r from-[#3B82F6] to-[#10B981]
+                  mt-5
+                  text-center
+                  px-5 py-2
+                  rounded-lg
+                  bg-gradient-to-r from-indigo-600 to-purple-600
                   text-white
-                  rounded-full
-                  px-4 py-1.5
-                  text-sm
                   font-semibold
+                  text-sm
                   shadow-md
+                  hover:from-indigo-700 hover:to-purple-700
+                  hover:shadow-lg
+                  transition-all duration-300
                 "
               >
-                {job.matchPercentage}%
-              </button>
-            </div>
-
-            <div className="w-full h-2.5 bg-gray-200 rounded-full mt-6 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#3B82F6] to-[#10B981] rounded-full transition-all duration-500"
-                style={{ width: `${job.matchPercentage}%` }}
-              />
-            </div>
-
-            <p className="text-xs text-center mt-3 text-gray-500 tracking-wide">
-              Match Score
-            </p>
+                Apply Now →
+              </a>
+            )}
           </div>
         ))}
       </div>
