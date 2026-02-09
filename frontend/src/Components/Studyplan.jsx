@@ -1,136 +1,152 @@
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
 import { FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { HiArrowLeft } from "react-icons/hi";
 
-export default  function Studyplan() {
+export default function Studyplan() {
+  const [studyPlan, setStudyPlan] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const[Studyplan,setstudyplan]=useState([])
-  const[loading,setLoading]=useState(false)
-  const token=localStorage.getItem('token')
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-  const fetchStudyPlan = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/studyplan",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+    const fetchStudyPlan = async () => {
+      try {
+        if (!token) {
+          setError("Login required");
+          setLoading(false);
+          return;
         }
-      );
 
-      setstudyplan(response.data.studyPlan || []);
-    } catch (err) {
-      console.log("Error fetching study plan:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const { data } = await axios.get(
+          "http://localhost:5000/api/studyplan",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-  fetchStudyPlan();
-}, [token]);
+        setStudyPlan(data?.studyPlan || {});
+      } catch (err) {
+        setError(
+          err.response?.data?.error ||
+          "Failed to load study plan"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudyPlan();
+  }, [token]);
+
+  if (loading) {
+    return (
+      <p className="text-white p-6">
+        Loading study plan...
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-red-500 p-6">
+        {error}
+      </p>
+    );
+  }
 
   return (
     <>
-      <nav className="w-full h-16 bg-gradient-to-r from-slate-900 to-slate-950 flex items-center  justify-between px-8 shadow-lg">
-       
-        <div className="text-white text-xl font-semibold tracking-wide">
-          NovaAI
+      <nav className="w-full h-16 bg-gradient-to-r from-slate-900 to-slate-950 flex items-center justify-between px-8 shadow-lg">
+        <div className="flex items-center gap-6">
+          <Link to="/">
+            <button className="flex items-center gap-2 text-sm px-4 py-2 rounded-lg border border-white/20 hover:bg-white/10 transition text-white">
+              <HiArrowLeft /> Back
+            </button>
+          </Link>
+
+          <div className="text-white text-xl font-semibold">
+            NovaAI
+          </div>
         </div>
-        <div className="text-white text-lg cursor-pointer">
-          <FaUser />
-        </div>
+
+        <FaUser className="text-white text-lg cursor-pointer" />
       </nav>
-      <section className="w-full bg-gradient-to-r from-slate-900 to-slate-950 rounded-2xl p-8  mt-6 text-white shadow-lg">
-  
-  <h1 className="text-3xl font-bold mb-2">
-    Full Stack DevOps Path
-  </h1>
 
-  
-  <p className="text-slate-300 max-w-3xl mb-6">
-    A comprehensive 16-day roadmap covering TypeScript, GraphQL, Docker, and Kubernetes
-    to take you from frontend to containerized deployment.
-  </p>
+      <section className="w-full bg-gradient-to-r from-slate-900 to-slate-950 rounded-2xl p-8 mt-6 text-white shadow-lg">
+        <h1 className="text-3xl font-bold mb-2">
+          AI Study Roadmap
+        </h1>
 
-  
-  <div className="flex gap-10">
-   
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-800">
-        📅
+        <p className="text-slate-300 mb-6">
+          Personalized roadmap based on missing skills
+        </p>
+
+        <div className="flex gap-10">
+          <div>
+            <p className="text-lg font-semibold">
+              {studyPlan.totalDays || 0}
+            </p>
+            <p className="text-sm text-slate-400">
+              Total Days
+            </p>
+          </div>
+
+          <div>
+            <p className="text-lg font-semibold">
+              {studyPlan.roadmap?.length || 0}
+            </p>
+            <p className="text-sm text-slate-400">
+              Skills Covered
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 p-6">
+        {studyPlan.roadmap?.map((day, i) => (
+          <div
+            key={i}
+            className="rounded-2xl border bg-white p-6 shadow-sm"
+          >
+            <span className="text-xs font-semibold text-blue-600">
+              DAY {day.day}
+            </span>
+
+            <h3 className="text-lg font-semibold mt-2">
+              {day.skill}
+            </h3>
+
+            <ul className="list-disc list-inside mt-3 text-sm">
+              {day.topics?.map((topic, idx) => (
+                <li key={idx}>{topic}</li>
+              ))}
+            </ul>
+
+            {day.wheretostudy?.map((r, idx) => (
+              <div key={idx} className="mt-3 text-xs">
+                📚 {r.platform} —{" "}
+                {r.link ? (
+                  <a
+                    href={r.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
+                    {r.resource}
+                  </a>
+                ) : (
+                  <span>{r.resource}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
-      <div>
-        <p className="text-lg font-semibold">{Studyplan.totalDays}</p>
-        <p className="text-sm text-slate-400">Total Days</p>
-      </div>
-    </div>
-
-   
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-slate-800">
-        📘
-      </div>
-      <div>
-        <p className="text-lg font-semibold">4</p>
-        <p className="text-sm text-slate-400">Core Skills</p>
-      </div>
-    </div>
-  </div>
-</section>
- <div className="mt-8 max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-  <div className="flex items-center gap-2 mb-4">
-    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 font-semibold">
-      &lt;/&gt;
-    </div>
-    <span className="text-xs font-semibold text-blue-600 tracking-wide">
-      DAY 1
-    </span>
-  </div>
-
-  
-  <h3 className="text-lg font-semibold text-slate-900 mb-4">
-    TypeScript
-  </h3>
-
-  
-  <div className="mb-4">
-    <p className="text-xs font-semibold text-slate-500 mb-2">
-      TOPICS
-    </p>
-    <ul className="list-disc list-inside space-y-1 text-sm text-slate-700">
-      <li>Introduction to TypeScript</li>
-      <li>TypeScript Basics</li>
-    </ul>
-  </div>
-
- 
-  <div>
-    <p className="text-xs font-semibold text-slate-500 mb-2">
-      RESOURCES
-    </p>
-    <div className="space-y-2">
-      <a
-        href="#"
-        className="block text-sm text-blue-600 hover:underline"
-      >
-        FreeCodeCamp – TypeScript Tutorial
-      </a>
-      <a
-        href="#"
-        className="block text-sm text-blue-600 hover:underline"
-      >
-        Official TypeScript Docs
-      </a>
-    </div>
-  </div>
-</div>
-
-
-
     </>
   );
 }
