@@ -10,6 +10,7 @@ import Analysisroute from './Route/latestAnalysis.js'
 import Aichatroute from './Route/Aichat.js'
 import jobdb from './Route/dbjobs.js'
 import studyplan from './Route/study.js'
+import profile from './Route/profile.js'
 const app = express()
 
 app.use(express.json())
@@ -22,6 +23,7 @@ app.use('/api/refresh/jobs',matchroute)
 app.use('/api',Aichatroute)
 app.use('/api',jobdb)
 app.use('/api',studyplan)
+app.use('/api',profile)
 
 
 
