@@ -27,9 +27,14 @@ app.use('/api',studyplan)
 app.use('/api',profile)
 app.use('/api',jobmatched)
 
+app.get("/", (req, res) => {
+  res.send("CareerLoop AI Backend Running");
+});
 
 
-app.listen(5000, () => {
-  ConnectDb()
-  console.log("server is created")
-})
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, async () => {
+  await ConnectDb();
+  console.log(`Server running on port ${PORT}`);
+});
