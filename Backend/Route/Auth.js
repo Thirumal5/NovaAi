@@ -38,13 +38,12 @@ router.post('/signup',async(req,res)=>
               experience
             }
         )
-        const token=jwt.sign(
-          {id:newUser._id},
-          "secertKeyNovaAi123",
-          {expiresIn:"8h"}
-          
-       
-        )
+        const token = jwt.sign(
+  { id: newUser._id },
+  process.env.JWT_SECRET,
+  { expiresIn: "8h" }
+);
+
        
         return res.status(201).json({success:true,token,user:{
           id: newUser._id,
@@ -86,11 +85,8 @@ router.post('/signin',async(req,res)=>{
      {
       return res.status(401).json({success:false,message:"Wrong Password"});
      }
-      const token=jwt.sign(
-        {id:user._id},
-        "secertKeyNovaAi123",
-        {expiresIn: "5h" }
-      )
+      jwt.sign({ id:user._id }, process.env.JWT_SECRET, { expiresIn:"5h" })
+
       
      return res.status(200).json({success:true,token,message:"Login Sucessfull"})
   }

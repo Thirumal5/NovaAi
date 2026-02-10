@@ -4,13 +4,15 @@ import { HiArrowRight } from "react-icons/hi2";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 
 export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+   const navigate=useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -22,7 +24,10 @@ export default function Signin() {
       if (response.data.success) {
         toast.success("Login Successful");
         localStorage.setItem("token", response.data.token);
-        window.location.href = "/";
+      setTimeout(() => {
+  navigate("/");
+}, 800);
+
       }
     } catch (err) {
       const errorMessage =
