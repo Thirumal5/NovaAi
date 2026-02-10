@@ -15,27 +15,30 @@ export default function Home() {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-        const res = await axios.get(
-          "https://carrerloopaibackend.onrender.com/api/jobmatched",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  if (!token) {
+    navigate("/signin");
+    return;
+  }
 
-        setData(res.data);
-      } catch (err) {
-        console.log("Error fetching dashboard data");
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        "https://carrerloopaibackend.onrender.com/api/jobmatched",
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setData(res.data);
+    } catch (err) {
+      setTimeout(fetchData, 2000);
+    }
+  };
 
-    fetchData();
-  }, []);
+  fetchData();
+}, []);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6 md:p-10 pb-36">
