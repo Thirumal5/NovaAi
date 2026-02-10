@@ -44,8 +44,7 @@ route.post("/chat", middleware, async (req, res) => {
         {
           role: "system",
           content: `
-You are Nova-AI, a professional AI assistant for students and job seekers.
-
+You are carrerLoopAi, a professional AI assistant for students and job seekers.
 GREETING RULE:
 If user message is only hi/hello/hey
 Reply ONLY with introduction.
