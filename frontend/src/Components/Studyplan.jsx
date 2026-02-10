@@ -14,9 +14,11 @@ export default function Studyplan() {
   useEffect(() => {
     const fetchStudyPlan = async () => {
       try {
-        if (!token) {
-          setError("Login required");
-          setLoading(false);
+       
+
+    if (!token) {
+      navigate("/signin");
+      setLoading(false);
           return;
         }
 
