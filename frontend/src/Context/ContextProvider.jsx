@@ -13,7 +13,7 @@ export default function ContextProvider({ children }) {
     if (!token) return;
 
     const res = await axios.get(
-      "http://localhost:5000/api/auth/me",
+      "https://carrerloopaibackend.onrender.com/api/auth/me",
       {
         headers: {
           Authorization: `Bearer ${token}`,
