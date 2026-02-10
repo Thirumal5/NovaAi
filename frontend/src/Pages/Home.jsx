@@ -20,7 +20,7 @@ export default function Home() {
         const token = localStorage.getItem("token");
 
         const res = await axios.get(
-          "http://localhost:5000/api/jobmatched",
+          "https://carrerloopaibackend.onrender.com/api/jobmatched",
           {
             headers: {
               Authorization: `Bearer ${token}`,

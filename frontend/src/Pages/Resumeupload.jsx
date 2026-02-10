@@ -50,7 +50,7 @@ export default function Resumeupload() {
 
       const response = await axios.post(
 
-        "http://localhost:5000/api/resume/resumeAnalyzer",
+        "https://carrerloopaibackend.onrender.com/api/resume/resumeAnalyzer",
         resumedata,
         {
           headers: {

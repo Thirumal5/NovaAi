@@ -21,7 +21,7 @@ export default function Studyplan() {
         }
 
         const { data } = await axios.get(
-          "http://localhost:5000/api/studyplan",
+          "https://carrerloopaibackend.onrender.com/api/studyplan",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
