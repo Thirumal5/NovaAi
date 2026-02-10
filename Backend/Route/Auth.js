@@ -39,9 +39,9 @@ router.post('/signup',async(req,res)=>
             }
         )
         const token = jwt.sign(
-  { id: newUser._id },
-  process.env.JWT_SECRET,
-  { expiresIn: "8h" }
+      { id: newUser._id },
+     process.env.JWT_SECRET,
+     { expiresIn: "8h" }
 );
 
        
@@ -63,39 +63,56 @@ router.post('/signup',async(req,res)=>
    }
 }
 )
-router.post('/signin',async(req,res)=>{
-     
-  try{
-     const{email,password}=req.body;
-      
-     if(!email||!password)
-     {
-       return res.status(400).json({
+router.post('/signin', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
         success: false,
         message: "All fields are required"
       });
-     }
-     const user = await User.findOne({ email }).select("+password");
-    if(!user)
-        {
-          return res.status(401).json({success:false,message:"user does not exists"})
-        }
-     const userpassword=await bcrypt.compare(password,user.password);
-     if(!userpassword)
-     {
-      return res.status(401).json({success:false,message:"Wrong Password"});
-     }
-      jwt.sign({ id:user._id }, process.env.JWT_SECRET, { expiresIn:"5h" })
+    }
 
-      
-     return res.status(200).json({success:true,token,message:"Login Sucessfull"})
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User does not exist"
+      });
+    }
+
+    const userpassword = await bcrypt.compare(password, user.password);
+
+    if (!userpassword) {
+      return res.status(401).json({
+        success: false,
+        message: "Wrong Password"
+      });
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "5h" }
+    );
+
+    return res.status(200).json({
+      success: true,
+      token,
+      message: "Login Successful"
+    });
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      message: "Error in Login"
+    });
   }
-  catch(err)
-  {
-     console.log(err);
-     return res.status(500).json({success:false,message:"Error in Login"})
-  }
-})
+});
+
 router.get('/me', middleware, async (req, res) => {
   try {
     const analysis = await Analysis.findOne({
