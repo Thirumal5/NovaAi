@@ -12,7 +12,7 @@ export default function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-   const navigate=useNavigate()
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -24,10 +24,7 @@ export default function Signin() {
       if (response.data.success) {
         toast.success("Login Successful");
         localStorage.setItem("token", response.data.token);
-      setTimeout(() => {
-  navigate("/");
-}, 800);
-
+        window.location.href = "/";
       }
     } catch (err) {
       const errorMessage =

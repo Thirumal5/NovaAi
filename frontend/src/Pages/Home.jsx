@@ -10,41 +10,32 @@ import User from "./User";
 import RecentMatches from "./RecentMatches";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [data, setData] = useState({});
-    const navigate=useNavigate();
+
   useEffect(() => {
-  const token = localStorage.getItem("token");
- 
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-if (!token) {
-  navigate("/signin");
-  return;
-}
+        const res = await axios.get(
+          "https://carrerloopaibackend.onrender.com/api/jobmatched",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
+        setData(res.data);
+      } catch (err) {
+        console.log("Error fetching dashboard data");
+      }
+    };
 
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(
-        "https://carrerloopaibackend.onrender.com/api/jobmatched",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setData(res.data);
-    } catch (err) {
-      console.log("Dashboard fetch failed");
-    }
-  };
-
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6 md:p-10 pb-36">
