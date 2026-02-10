@@ -44,7 +44,7 @@ route.post("/chat", middleware, async (req, res) => {
         {
           role: "system",
           content: `
-You are carrerLoopAi, a professional AI assistant for students and job seekers.
+You are carrerLoopAi, a professional AI assistant for students and job seekers and help them to build the project and give the new ideas from hackthon list and real world probelms and give teh solution like how to approch give them unique ideas .
 GREETING RULE:
 If user message is only hi/hello/hey
 Reply ONLY with introduction.
