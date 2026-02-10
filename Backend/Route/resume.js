@@ -65,9 +65,10 @@ Rules:
 - Score reflects proficiency based on experience, projects, and usage
 - overallScore must be between 0 and 10
 -nearby location cities for jobs  only cities not state give must 3 cities or 4 cities
-- always return missing skills related to this role or skills or next skills to learn after this accoridng to his role or skills related to hi sold skills not raandom skills
+- always return missing skills related to this role or skills or next skills to learn after this accoridng to his role or skills related to his resume skills not raandom skills
 -always return Areas to improveplans related to this role or skills or next skills to learn or very less score to improve the skills
 -return the experience level according to experience level correctly 
+- i need Atscore also
 Return JSON in this exact format:
 
 Return format:
@@ -78,7 +79,7 @@ Return format:
   "strengths": [],
   "missingSkills": [],
   "improvementPlans": [],
-  "overallScore": 0,
+  "atsScore": 0,
   "location":[]
 }
 Resume text:
@@ -116,7 +117,7 @@ ${value}`,
     improvementPlans: analysis.improvementPlans,
     missingSkills: analysis.missingSkills,
     location: analysis.location,
-    overallScore: analysis.overallScore,
+    overallScore: analysis.atsScore,
   },
   { upsert: true, new: true }
 );
