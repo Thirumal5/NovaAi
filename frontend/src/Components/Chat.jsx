@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { HiArrowLeft } from "react-icons/hi2";
 import { Link, useNavigate } from "react-router-dom";
-import logo from '../assets/chatbot.png'
+
 function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -67,7 +67,7 @@ function Chat() {
 
         <div className="flex items-center gap-3">
           <img
-            src={logo}
+            src="/chatbot.png"
             alt="bot"
             className="h-20 w-20 rounded-full  object-cover"
           />

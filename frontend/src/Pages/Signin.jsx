@@ -4,7 +4,7 @@ import { HiArrowRight } from "react-icons/hi2";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
-import logo from "../assets/loopAi.png";
+
 
 export default function Signin() {
   const [email, setEmail] = useState("");
@@ -37,7 +37,7 @@ export default function Signin() {
         <div className="flex flex-col justify-center items-center gap-2">
           <div className="inline-flex items-center justify-center w-26 h-26 rounded-full mb-4">
             <span className="text-2xl text-white">
-              <img src={logo} alt="CareerLoopAI Logo" className="w-30 h-30 object-contain" />
+              <img src="/loopAi.png"alt="CareerLoopAI Logo" className="w-30 h-30 object-contain" />
             </span>
           </div>
           <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600  bg-clip-text text-transparent">
