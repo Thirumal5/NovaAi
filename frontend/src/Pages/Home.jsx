@@ -14,10 +14,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [data, setData] = useState({});
-
+    const navigate=useNavigate();
   useEffect(() => {
   const token = localStorage.getItem("token");
-  const navigate=useNavigate();
+ 
 
 if (!token) {
   navigate("/signin");
