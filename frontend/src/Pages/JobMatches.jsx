@@ -14,7 +14,7 @@ export default function JobMatches() {
 
   const fetchJobs = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/jobs", {
+      const res = await axios.get("https://carrerloopaibackend.onrender.com/api/jobs", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setJobs(res.data.jobs || []);
@@ -72,7 +72,7 @@ export default function JobMatches() {
   return (
     <div className="min-h-screen bg-gray-100 px-6 md:px-16 py-12">
       
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-12">
         <Link to="/">
           <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition">
@@ -95,7 +95,7 @@ export default function JobMatches() {
         </div>
       </div>
 
-      {/* Jobs Count Card */}
+      
       <div className="rounded-2xl bg-white border p-10 mb-16 shadow">
         <h2 className="text-6xl font-extrabold text-gray-800">
           {jobs.length}
