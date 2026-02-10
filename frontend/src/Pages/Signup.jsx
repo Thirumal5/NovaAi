@@ -60,8 +60,8 @@ export default function Signup() {
       <div className="bg-white w-[390px] p-8 rounded shadow">
         <div className="flex flex-col items-center gap-2 mb-4">
           <img src={logo} alt="CareerLoopAI Logo" className="w-30 h-30 object-contain" />
-          <h2 className="text-xl font-bold text-center">Create Account</h2>
-          <p className="text-sm text-gray-500 text-center">
+          <h2 className="text-xl font-bold text-center text-indigo-600">Create Account</h2>
+          <p className="text-sm text-purple-500 text-center">
             Join thousands of students landing dream jobs
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function Signup() {
               !targetRole ||
               !experience
             }
-            className={`w-full mt-4 p-2 rounded text-white font-semibold bg-gradient-to-r from-[#3B82F6] to-[#10B981] ${
+            className={`w-full mt-4 p-2 rounded text-white font-semibold bg-gradient-to-r from-indigo-600 to-purple-600  ${
               loading || password !== confirmPassword ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
             }`}
           >
@@ -209,7 +209,7 @@ export default function Signup() {
 
         <div className="flex justify-center gap-1 mt-4 text-sm">
           <span>Already have an account?</span>
-          <Link to="/signin" className="text-blue-500 font-medium">
+          <Link to="/signin" className="text-indigo-600   font-medium">
             Sign In
           </Link>
         </div>

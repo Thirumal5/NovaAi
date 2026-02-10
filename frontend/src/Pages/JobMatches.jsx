@@ -42,13 +42,20 @@ export default function JobMatches() {
       setRefreshing(false);
     }
   };
+  
 
   useEffect(() => {
     if (!token) {
       navigate("/signin");
       return;
     }
+    
     fetchJobs();
+     const interval= setInterval(()=>{
+        refreshJobs();
+     }, 4 * 60 * 60 * 1000)
+
+    return () => clearInterval(interval);
   }, [token, navigate]);
 
   if (loading) {

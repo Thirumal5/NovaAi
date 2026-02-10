@@ -5,6 +5,8 @@ import OpenAI from "openai";
 import Analysis from "../Model/Analysis.js";
 import middleware from "../Middleware/Middleware.js";
 
+
+
 const route = Router();
 
 const upload = multer({
@@ -63,7 +65,7 @@ Rules:
 - Score reflects proficiency based on experience, projects, and usage
 - overallScore must be between 0 and 10
 -nearby location cities for jobs  only cities not state give must 3 cities or 4 cities
-- always return missing skills related to this role or skills or next skills to learn after this
+- always return missing skills related to this role or skills or next skills to learn after this accoridng to his role or skills related to hi sold skills not raandom skills
 -always return Areas to improveplans related to this role or skills or next skills to learn or very less score to improve the skills
 -return the experience level according to experience level correctly 
 Return JSON in this exact format:

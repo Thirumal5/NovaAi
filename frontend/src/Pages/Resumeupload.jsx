@@ -156,11 +156,11 @@ export default function Resumeupload() {
                   </div>
 
                   <h2 className="text-3xl font-bold text-white mb-2">Upload Your Resume</h2>
-                  <p className="text-white/50 mb-8">Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                  <p className="text-white/50 mb-8">Supported formats:DOC, DOCX (Max 5MB)</p>
 
                   <input
                     type="file"
-                    accept=".doc,.docx,.pdf"
+                    accept=".doc,.docx"
                     ref={fileupload}
                     hidden
                     onChange={(e) => e.target.files && setResume(e.target.files[0])}

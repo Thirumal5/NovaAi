@@ -8,16 +8,9 @@ const route = Router();
 
 route.get("/studyplan", middleware, async (req, res) => {
   try {
-    const existingPlan = await StudyPlan.findOne({
-      userId: req.userId,
-    });
+   
 
-    if (existingPlan) {
-      return res.json({
-        success: true,
-        studyPlan: existingPlan,
-      });
-    }
+    
 
     const analysis = await Analysis.findOne({
       userId: req.userId,
@@ -28,6 +21,15 @@ route.get("/studyplan", middleware, async (req, res) => {
         error: "Missing skills not found",
       });
     }
+    const existingPlan = await StudyPlan.findOne({ userId: req.userId });
+
+if (existingPlan && existingPlan.updatedAt > analysis.updatedAt) {
+  return res.json({
+    success: true,
+    studyPlan: existingPlan,
+  });
+}
+
 
     const client = new OpenAI({
       apiKey: process.env.GROQ_API_KEY,
@@ -121,11 +123,14 @@ Format:
       });
     }
 
-    const savedPlan = await StudyPlan.create({
-      userId: req.userId,
-      totalDays: parsedData.totalDays,
-      roadmap: parsedData.roadmap,
-    });
+   const savedPlan = await StudyPlan.findOneAndUpdate(
+  { userId: req.userId },
+  {
+    totalDays: parsedData.totalDays,
+    roadmap: parsedData.roadmap,
+  },
+  { new: true, upsert: true }
+);
 
     return res.json({
       success: true,

@@ -53,7 +53,7 @@ export default function Studyplan() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-        <p className="text-red-500 text-lg">{error}</p>
+        <p className="text-red-500 text-lg">No study plan is generated upload u r resume</p>
       </div>
     );
   }

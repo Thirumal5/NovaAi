@@ -40,10 +40,10 @@ export default function Signin() {
               <img src={logo} alt="CareerLoopAI Logo" className="w-30 h-30 object-contain" />
             </span>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#3B82F6] to-[#10B981] bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600  bg-clip-text text-transparent">
             CarrerLoopAi
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-purple-600">
             Welcome back! Sign in to continue
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function Signin() {
 
           <button
             type="submit"
-            className="w-full mt-6 p-2 rounded text-sm bg-gradient-to-r from-[#3B82F6] to-[#10B981] hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-white font-semibold"
+            className="w-full mt-6 p-2 rounded text-sm bg-gradient-to-r from-indigo-600 to-purple-600  hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-white font-semibold"
           >
             Sign In
             <HiArrowRight className="text-sm ml-2" />
@@ -93,7 +93,7 @@ export default function Signin() {
 
           <div className="flex gap-2 justify-center mt-3">
             <p>New to  CarrerLoopAi?</p>
-            <Link to="/signup" className="text-[#3B82F6] hover:font-medium">
+            <Link to="/signup" className="text-indigo-600 hover:font-medium">
               Create an account
             </Link>
           </div>
