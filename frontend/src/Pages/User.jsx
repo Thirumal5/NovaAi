@@ -3,13 +3,13 @@ import { LuUpload } from "react-icons/lu";
 import { Auth } from "../Context/ContextProvider";
 import { Link, Navigate } from "react-router-dom";
 
-export default function User() {
+export default function User({data}) {
   const { user, loading } = Auth();
 
   if (loading) return <h2 className="text-center mt-20">Loading...</h2>;
   if (!user) return <Navigate to="/signin" />;
 
-  const score = Math.round(user.matchScore * 10);
+  const score = data
 
   return (
     <div className="w-full text-white">

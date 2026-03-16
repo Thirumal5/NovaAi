@@ -11,6 +11,7 @@ export default function Resumeresult() {
   if (!analysis) {
     return <Navigate to="/" />;
   }
+  
 
   return (
     <div className='min-h-screen bg-[#0f172a] text-white p-6 md:p-10 font-["Outfit"]'>
@@ -52,7 +53,7 @@ export default function Resumeresult() {
                 <circle
                   cx="50%" cy="50%" r="45%" fill="transparent" stroke="url(#score-gradient)"
                   strokeWidth="8" strokeDasharray="283"
-                  strokeDashoffset={283 - (283 * analysis.overallScore * 10) / 100}
+                  strokeDashoffset={283 - (283 * (analysis.atsScore*10)) / 100}
                   strokeLinecap="round"
                 />
                 <defs>
@@ -63,7 +64,7 @@ export default function Resumeresult() {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-bold text-white">{Math.round(analysis.overallScore * 10)}</span>
+                <span className="text-4xl font-bold text-white">{Math.round(analysis.atsScore * 10)}</span>
                 <span className="text-xs text-white/40 uppercase tracking-wider">Score</span>
               </div>
             </div>

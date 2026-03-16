@@ -14,6 +14,24 @@ const openai = new OpenAI({
 route.post("/chat", middleware, async (req, res) => {
   try {
     const { message } = req.body;
+    const msg = message.toLowerCase().trim();
+
+    if (/^(hi|hello|hey|vanakkam)/.test(msg)) {
+      return res.json({
+        airesponse: `
+Hi 👋 I’m CareerLoopAI.
+
+I help students with:
+
+• Resume ATS improvement  
+• Job preparation roadmap  
+• Company interview preparation  
+• Real-world project ideas  
+
+Ask me anything 👍
+`,
+      });
+    }
 
     const resumedata = await Analysis.findOne(
       { userId: req.userId },
@@ -28,59 +46,76 @@ route.post("/chat", middleware, async (req, res) => {
       jobs.length > 0
         ? jobs
             .map(
-              (job, i) =>
-                `${i + 1}. ${job.title} at ${job.companyname}, ${job.location}, Salary: ${job.salary} description:${job.description}`
+              (job) =>
+                `${job.title} | ${job.companyname} | ${job.location} | Salary: ${job.salary}`
             )
             .join("\n")
         : "No jobs available";
 
-    const resumecontent = resumedata?.resumetext
-      ? resumedata.resumetext
-      : "No resume uploaded yet";
+    const resumecontent = resumedata?.resumetext || "No resume uploaded";
+
+    let systemPrompt = `
+You are CareerLoopAI, an AI mentor helping students prepare for software jobs.
+
+Use the resume and job list to guide the user.
+
+Response style:
+• Clear headings
+• Bullet points
+• Short explanations
+• Focus on helping the user get placed
+`;
+
+    if (msg.includes("job")) {
+      systemPrompt = `
+You are an AI job mentor.
+
+Use the resume and job list to:
+
+• Find matching jobs
+• Rank them by skill match
+• Explain why they match
+• Suggest missing skills needed
+`;
+    }
+
+    if (msg.includes("resume")) {
+      systemPrompt = `
+You are an ATS resume analyzer.
+
+Analyze the resume and provide:
+
+• Missing skills
+• Resume improvement suggestions
+• Skills required for software roles
+• How to increase ATS score
+`;
+    }
+
+    if (msg.includes("project")) {
+      systemPrompt = `
+Suggest real-world software projects inspired by startups and hackathons.
+
+Avoid basic CRUD tutorial projects.
+
+For each project include:
+
+• Project Title
+• Problem Statement
+• Key Features
+• Tech Stack
+• Difficulty Level
+• Resume Value
+`;
+    }
 
     const response = await openai.chat.completions.create({
       model: "llama-3.3-70b-versatile",
+      temperature: 0.3,
       messages: [
         {
           role: "system",
-          content: `
-You are carrerLoopAi, a professional AI assistant for students and job seekers and help them to build the project and give the new ideas from hackthon list and real world probelms and give teh solution like how to approch give them unique ideas  
-You are an AI Career Guidance Assistant.
- GREETING RULE:
-If user message is only hi/hello/hey
-Reply ONLY with introduction hi I am AI assistant for students and job seekers and help them to build the project and give the new ideas from hackthon list and real world probelms and give teh solution like how to approch give them unique ideas.
-no dont say about this in introduction give the new ideas from hackthon list and real world probelms and give teh solution like how to approch give them unique ideas  say i will help in project ideas  new give new ideas now normal like blog or todo app big b2c b2b and saas idea projects gte from online real world webiste and hackthon lists still now now solution given and compamy hackthon probelms like that more new and unique 
-When users ask about project ideas, always suggest only just :
-- Real-world problem-based projects (not generic CRUD apps)
-- Ideas aligned with current industry needs, hackathons, startups, or company problems.
-
-For each project idea provide:
-
-1. Project Title
-2. Problem Statement (real-world context)
-3. Key Features
-4. Suggested Tech Stack
-5. Difficulty Level (Beginner / Intermediate / Advanced)
-6. How it improves resume value
-7. Possible future enhancements
-
-If the user has resume data or skills available:
-- Prioritize ideas that fill their skill gaps.
-- Suggest projects relevant to their career goals.
-
-Focus especially on:
-- AI / Full Stack / Cloud / Data projects
-- Hackathon-style innovation
-- Industry-inspired problems (e.g., fintech, healthcare, logistics, education)
-
-Avoid very basic tutorial projects unless explicitly requested.
-Always keep suggestions practical and portfolio-worthy..
-
-FORMAT RULES:
-- Only headings and bullet points
-- No paragraphs
-- Simple English (Tamil + English ok)  
-          `,
+          content: systemPrompt,
         },
         {
           role: "user",
@@ -88,20 +123,26 @@ FORMAT RULES:
 USER QUESTION:
 ${message}
 
-USER RESUME TEXT:
+USER RESUME:
 ${resumecontent}
 
-JOBS MATCHED:
+JOB LIST:
 ${jobText}
-          `,
+`,
         },
       ],
     });
 
-    res.json({ airesponse: response.choices[0].message.content });
+    const aiText =
+      response?.choices?.[0]?.message?.content ||
+      "AI couldn't generate a response. Please try again.";
+
+    res.json({ airesponse: aiText });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "AI failed" });
+    res.status(500).json({
+      airesponse: "⚠️ Nova-AI error. Try again.",
+    });
   }
 });
 

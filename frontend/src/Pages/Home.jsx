@@ -42,7 +42,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-6 md:p-10 pb-36">
-      <User />
+      <User  data={data.score ? data.score * 10 : 0} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16">
         <Box
